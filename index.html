@@ -584,12 +584,13 @@
                 const src = await PDFLib.PDFDocument.load(await splitFile.arrayBuffer());
                 const mode = document.querySelector('input[name="split-mode"]:checked').value;
                 const zip = new JSZip();
+                const baseName = splitFile.name.replace(/\.pdf$/i, '');
                 
                 if(mode === 'all') {
                     for(let i=0; i<splitTotal; i++) {
                         const sub = await PDFLib.PDFDocument.create();
                         const [p] = await sub.copyPages(src, [i]); sub.addPage(p);
-                        zip.file(`page-${i+1}.pdf`, await sub.save());
+                        zip.file(`${baseName}_page-${i+1}.pdf`, await sub.save());
                     }
                 } else {
                     const pos = parseInt(sSlider.value);
@@ -598,12 +599,12 @@
                     const p1 = await sub1.copyPages(src, Array.from({length:pos}, (_,i)=>i));
                     const p2 = await sub2.copyPages(src, Array.from({length:splitTotal-pos}, (_,i)=>i+pos));
                     p1.forEach(p=>sub1.addPage(p)); p2.forEach(p=>sub2.addPage(p));
-                    zip.file(`part-1(p1-${pos}).pdf`, await sub1.save());
-                    zip.file(`part-2(p${pos+1}-end).pdf`, await sub2.save());
+                    zip.file(`${baseName}_part1(1-${pos}).pdf`, await sub1.save());
+                    zip.file(`${baseName}_part2(${pos+1}-end).pdf`, await sub2.save());
                 }
                 const content = await zip.generateAsync({type:"blob"});
-                saveAs(content, `split-${Date.now()}.zip`);
-                showToast('分割完了！');
+                saveAs(content, `${baseName}-split.zip`);
+                showToast('ZIPファイルをダウンロードしました');
             } catch(e) { showToast('エラーが発生しました', true); } finally { toggleLoading(false); }
         };
 
@@ -759,17 +760,19 @@
             try {
                 const pdf = await pdfjsLib.getDocument({data: await pdf2imgFile.arrayBuffer()}).promise;
                 const zip = new JSZip();
+                const baseName = pdf2imgFile.name.replace(/\.pdf$/i, '');
+
                 for(let i=1; i<=pdf.numPages; i++) {
                     const page = await pdf.getPage(i);
                     const viewport = page.getViewport({scale:2.0});
                     const canvas = document.createElement('canvas');
                     canvas.width = viewport.width; canvas.height = viewport.height;
                     await page.render({canvasContext: canvas.getContext('2d'), viewport}).promise;
-                    zip.file(`page-${i}.jpg`, await new Promise(r=>canvas.toBlob(r, 'image/jpeg', 0.85)));
+                    zip.file(`${baseName}_page-${i}.jpg`, await new Promise(r=>canvas.toBlob(r, 'image/jpeg', 0.85)));
                 }
-                saveAs(await zip.generateAsync({type:'blob'}), `images-${Date.now()}.zip`);
-                showToast('変換完了！');
-            } catch(e) { showToast('エラー', true); } finally { toggleLoading(false); }
+                saveAs(await zip.generateAsync({type:'blob'}), `${baseName}-images.zip`);
+                showToast('ZIPファイルをダウンロードしました');
+            } catch(e) { console.error(e); showToast('エラーが発生しました', true); } finally { toggleLoading(false); }
         };
 
         window.toggleConvertMode = (mode) => {
