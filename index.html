@@ -37,8 +37,8 @@
             background-color: #f0f4f8;
         }
         .drag-active {
-            border-color: #3b82f6 !important;
-            background-color: #eff6ff !important;
+            border-color: #6366f1 !important; /* indigo-500 */
+            background-color: #eef2ff !important; /* indigo-50 */
         }
         /* スクロールバーのカスタマイズ */
         ::-webkit-scrollbar {
@@ -78,9 +78,9 @@
         }
         /* ページ選択時のスタイル */
         .page-card.selected {
-            border-color: #3b82f6;
-            background-color: #eff6ff;
-            ring: 2px solid #3b82f6;
+            border-color: #6366f1; /* indigo-500 */
+            background-color: #eef2ff; /* indigo-50 */
+            ring: 2px solid #6366f1; /* indigo-500 */
         }
         .page-preview-canvas {
             transition: transform 0.3s ease;
@@ -93,89 +93,110 @@
             -ms-overflow-style: none;
             scrollbar-width: none;
         }
+        
+        /* スライダーのカスタマイズ */
+        input[type=range]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 24px;
+            height: 24px;
+            background: #ffffff;
+            border: 2px solid #6366f1; /* indigo-500 */
+            border-radius: 50%;
+            cursor: pointer;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            margin-top: -10px; /* トラックとの位置調整 */
+        }
+        input[type=range]::-webkit-slider-runnable-track {
+            width: 100%;
+            height: 6px;
+            cursor: pointer;
+            background: #e2e8f0;
+            border-radius: 3px;
+        }
     </style>
 </head>
-<body class="text-slate-700 h-screen flex flex-col">
+<body class="text-slate-700 h-screen flex flex-col overflow-hidden">
 
-    <!-- ヘッダー -->
-    <header class="bg-white shadow-sm z-20 relative">
+    <!-- ヘッダー (固定) -->
+    <header class="bg-white shadow-sm z-20 relative flex-shrink-0">
         <div class="max-w-4xl mx-auto px-4 py-4 flex items-center justify-between">
             <div class="flex items-center gap-3">
-                <div class="bg-blue-600 text-white p-2 rounded-xl shadow-md shadow-blue-200">
+                <div class="bg-indigo-600 text-white p-2 rounded-lg shadow-md shadow-indigo-200">
                     <i class="fa-solid fa-file-pdf text-xl"></i>
                 </div>
                 <h1 class="text-xl font-bold tracking-tight text-slate-800">PDF Tools</h1>
             </div>
-            <a href="#" onclick="location.reload()" class="text-sm text-slate-500 hover:text-blue-600 transition bg-slate-50 px-3 py-2 rounded-lg hover:bg-slate-100">
+            <a href="#" onclick="location.reload()" class="text-sm text-slate-500 hover:text-indigo-600 transition bg-slate-50 px-3 py-2 rounded hover:bg-slate-100">
                 <i class="fa-solid fa-rotate-right mr-1"></i> リセット
             </a>
         </div>
         
         <!-- ナビゲーションメニュー（セグメンテッドコントロール風） -->
         <div class="px-4 pb-6 bg-white">
-            <div class="max-w-max mx-auto bg-slate-100 p-1.5 rounded-2xl flex overflow-x-auto no-scrollbar shadow-inner gap-1">
-                <button onclick="switchTab('merge')" class="tab-btn active px-6 py-2.5 rounded-xl text-sm font-bold transition-all duration-200 flex items-center gap-2 whitespace-nowrap bg-white text-blue-600 shadow-sm" data-tab="merge">
+            <div class="max-w-max mx-auto bg-slate-100 p-1 rounded-lg flex overflow-x-auto no-scrollbar shadow-inner gap-1">
+                <button onclick="switchTab('merge')" class="tab-btn active px-6 py-2.5 rounded-md text-sm font-bold transition-all duration-200 flex items-center gap-2 whitespace-nowrap bg-white text-indigo-600 shadow-sm" data-tab="merge">
                     <i class="fa-solid fa-layer-group"></i> 結合
                 </button>
-                <button onclick="switchTab('split')" class="tab-btn px-6 py-2.5 rounded-xl text-sm font-medium transition-all duration-200 flex items-center gap-2 whitespace-nowrap text-slate-500 hover:text-slate-700" data-tab="split">
+                <button onclick="switchTab('split')" class="tab-btn px-6 py-2.5 rounded-md text-sm font-medium transition-all duration-200 flex items-center gap-2 whitespace-nowrap text-slate-500 hover:text-slate-700" data-tab="split">
                     <i class="fa-solid fa-scissors"></i> 分割
                 </button>
-                <button onclick="switchTab('organize')" class="tab-btn px-6 py-2.5 rounded-xl text-sm font-medium transition-all duration-200 flex items-center gap-2 whitespace-nowrap text-slate-500 hover:text-slate-700" data-tab="organize">
+                <button onclick="switchTab('organize')" class="tab-btn px-6 py-2.5 rounded-md text-sm font-medium transition-all duration-200 flex items-center gap-2 whitespace-nowrap text-slate-500 hover:text-slate-700" data-tab="organize">
                     <i class="fa-solid fa-table-cells-large"></i> 整理
                 </button>
-                <button onclick="switchTab('convert')" class="tab-btn px-6 py-2.5 rounded-xl text-sm font-medium transition-all duration-200 flex items-center gap-2 whitespace-nowrap text-slate-500 hover:text-slate-700" data-tab="convert">
+                <button onclick="switchTab('convert')" class="tab-btn px-6 py-2.5 rounded-md text-sm font-medium transition-all duration-200 flex items-center gap-2 whitespace-nowrap text-slate-500 hover:text-slate-700" data-tab="convert">
                     <i class="fa-solid fa-right-left"></i> 変換
                 </button>
-                <button onclick="switchTab('number')" class="tab-btn px-6 py-2.5 rounded-xl text-sm font-medium transition-all duration-200 flex items-center gap-2 whitespace-nowrap text-slate-500 hover:text-slate-700" data-tab="number">
+                <button onclick="switchTab('number')" class="tab-btn px-6 py-2.5 rounded-md text-sm font-medium transition-all duration-200 flex items-center gap-2 whitespace-nowrap text-slate-500 hover:text-slate-700" data-tab="number">
                     <i class="fa-solid fa-hashtag"></i> 番号
                 </button>
             </div>
         </div>
     </header>
 
-    <!-- メインコンテンツエリア -->
-    <main class="flex-1 overflow-hidden relative w-full max-w-4xl mx-auto p-4">
+    <!-- メインコンテンツエリア (スクロール可能) -->
+    <main class="flex-1 overflow-y-auto relative w-full max-w-4xl mx-auto p-4">
         
         <!-- =======================
              タブ: 結合 (Merge)
         ======================== -->
-        <div id="tab-merge" class="tab-content h-full flex flex-col gap-4">
+        <div id="tab-merge" class="tab-content flex flex-col gap-4 pb-8">
             <div class="text-center py-2 hidden sm:block shrink-0">
                 <p class="text-slate-500 text-sm">複数のPDFファイルをアップロードして、リストをドラッグして順番を並び替え、1つのファイルに結合します。</p>
             </div>
 
             <!-- 結合用ドロップゾーン -->
-            <div id="drop-zone-merge" class="bg-white border-2 border-dashed border-slate-300 rounded-3xl p-6 text-center transition-all duration-200 cursor-pointer hover:border-blue-400 hover:bg-slate-50 flex flex-col items-center justify-center gap-2 shrink-0">
+            <div id="drop-zone-merge" class="w-full min-h-[240px] bg-white border-2 border-dashed border-slate-300 rounded-xl p-8 text-center transition-all duration-200 cursor-pointer hover:border-indigo-400 hover:bg-indigo-50 flex flex-col items-center justify-center shrink-0">
                 <input type="file" id="file-input-merge" class="hidden" multiple accept="application/pdf">
-                <div class="w-14 h-14 bg-blue-50 text-blue-500 rounded-2xl flex items-center justify-center text-2xl mb-2 pointer-events-none">
+                <div class="w-20 h-20 bg-indigo-50 text-indigo-500 rounded-2xl flex items-center justify-center text-3xl mb-3 pointer-events-none">
                     <i class="fa-solid fa-cloud-arrow-up"></i>
                 </div>
-                <h2 class="text-base font-bold text-slate-700 pointer-events-none">PDFを追加</h2>
-                <p class="text-xs text-slate-400 pointer-events-none">ドラッグ＆ドロップ または クリック</p>
+                <h2 class="text-lg font-bold text-slate-700 pointer-events-none">PDFを追加</h2>
+                <p class="text-sm text-slate-400 mt-2 pointer-events-none">ドラッグ＆ドロップ または クリック</p>
             </div>
 
             <!-- ファイルリスト -->
-            <div class="flex-1 bg-white rounded-3xl shadow-sm border border-slate-200 overflow-hidden flex flex-col min-h-0">
-                <div class="p-4 border-b border-slate-100 flex justify-between items-center bg-slate-50 shrink-0">
+            <div class="bg-white rounded-xl shadow-sm border border-slate-200 flex flex-col min-h-[200px]">
+                <div class="p-4 border-b border-slate-100 flex justify-between items-center bg-slate-50 shrink-0 rounded-t-xl">
                     <h3 class="font-bold text-slate-700 flex items-center gap-2 text-sm">
                         <i class="fa-solid fa-list-ul text-slate-400"></i> ファイル一覧
-                        <span id="file-count-merge" class="bg-slate-200 text-slate-600 text-xs px-2 py-0.5 rounded-full">0</span>
+                        <span id="file-count-merge" class="bg-slate-200 text-slate-600 text-xs px-2 py-0.5 rounded">0</span>
                     </h3>
                     <button id="clear-btn-merge" class="text-xs text-red-500 hover:text-red-700 font-medium hidden transition hover:bg-red-50 px-2 py-1 rounded">
                         <i class="fa-regular fa-trash-can mr-1"></i>すべて削除
                     </button>
                 </div>
-                <div id="file-list-merge" class="flex-1 overflow-y-auto p-4 space-y-2">
-                    <div id="empty-state-merge" class="h-full flex flex-col items-center justify-center text-slate-300 py-6">
+                <div id="file-list-merge" class="p-4 space-y-2">
+                    <div id="empty-state-merge" class="flex flex-col items-center justify-center text-slate-300 py-10">
                         <i class="fa-regular fa-file-pdf text-4xl mb-3 opacity-50"></i>
                         <p class="text-sm">ファイルがまだありません</p>
                     </div>
                 </div>
             </div>
 
-            <div class="shrink-0 pt-2">
-                <button id="btn-exec-merge" class="w-full bg-slate-800 hover:bg-slate-900 text-white font-bold py-4 px-6 rounded-2xl shadow-lg shadow-slate-200 transition transform active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed disabled:shadow-none flex items-center justify-center gap-2 text-base" disabled>
-                    <i class="fa-solid fa-file-export"></i> 結合してダウンロード
+            <div class="pt-2">
+                <button id="btn-exec-merge" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-4 px-6 rounded-lg shadow-lg shadow-indigo-200 transition transform active:scale-[0.98] disabled:bg-indigo-300 disabled:cursor-not-allowed disabled:shadow-none flex items-center justify-center gap-2 text-base" disabled>
+                    <i class="fa-solid fa-download"></i> 結合してダウンロード
                 </button>
             </div>
         </div>
@@ -184,48 +205,86 @@
         <!-- =======================
              タブ: 分割 (Split)
         ======================== -->
-        <div id="tab-split" class="tab-content h-full hidden flex-col gap-4">
+        <div id="tab-split" class="tab-content hidden flex-col gap-4 pb-8">
             <div class="text-center py-2 hidden sm:block shrink-0">
                 <p class="text-slate-500 text-sm">PDFファイルを1つアップロードし、分割方法を選択してください。</p>
             </div>
 
-            <div id="drop-zone-split" class="bg-white border-2 border-dashed border-slate-300 rounded-3xl p-6 text-center transition-all duration-200 cursor-pointer hover:border-blue-400 hover:bg-slate-50 flex flex-col items-center justify-center gap-2 shrink-0">
+            <!-- 分割用ドロップゾーン -->
+            <div id="drop-zone-split" class="w-full min-h-[240px] bg-white border-2 border-dashed border-slate-300 rounded-xl p-8 text-center transition-all duration-200 cursor-pointer hover:border-indigo-400 hover:bg-indigo-50 flex flex-col items-center justify-center shrink-0">
                 <input type="file" id="file-input-split" class="hidden" accept="application/pdf">
-                <div class="w-14 h-14 bg-blue-50 text-blue-500 rounded-2xl flex items-center justify-center text-2xl mb-2 pointer-events-none">
+                <div class="w-20 h-20 bg-indigo-50 text-indigo-500 rounded-2xl flex items-center justify-center text-3xl mb-3 pointer-events-none">
                     <i class="fa-solid fa-scissors"></i>
                 </div>
-                <h2 id="split-filename" class="text-base font-bold text-slate-700 pointer-events-none">分割するPDFを選択</h2>
-                <p class="text-xs text-slate-400 pointer-events-none">ドラッグ＆ドロップ または クリック</p>
+                <h2 id="split-filename" class="text-lg font-bold text-slate-700 pointer-events-none">分割するPDFを選択</h2>
+                <p class="text-sm text-slate-400 mt-2 pointer-events-none">ドラッグ＆ドロップ または クリック</p>
             </div>
 
-            <div class="bg-white rounded-3xl shadow-sm border border-slate-200 p-6 flex flex-col gap-4">
+            <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6 flex flex-col gap-4">
                 <h3 class="font-bold text-slate-700 border-b border-slate-100 pb-2">分割オプション</h3>
                 <div class="flex flex-col gap-3">
-                    <label class="flex items-center gap-3 p-4 border rounded-2xl cursor-pointer hover:bg-slate-50 transition peer-checked:border-slate-800 peer-checked:bg-slate-50 peer-checked:ring-1 peer-checked:ring-slate-800">
-                        <input type="radio" name="split-mode" value="all" class="w-5 h-5 text-slate-800 accent-slate-800" checked onchange="toggleSplitInputs()">
+                    <label class="flex items-center gap-3 p-4 border rounded-lg cursor-pointer hover:bg-slate-50 transition has-[:checked]:border-2 has-[:checked]:border-indigo-600 has-[:checked]:bg-indigo-50 has-[:checked]:ring-0">
+                        <input type="radio" name="split-mode" value="all" class="w-5 h-5 text-indigo-600 accent-indigo-600" checked onchange="toggleSplitInputs()">
                         <div>
                             <span class="block font-bold text-slate-700">全ページ分割</span>
                             <span class="text-xs text-slate-500">全てのページを1ページごとのPDFファイルにします</span>
                         </div>
                     </label>
-                    <label class="flex items-center gap-3 p-4 border rounded-2xl cursor-pointer hover:bg-slate-50 transition peer-checked:border-slate-800 peer-checked:bg-slate-50 peer-checked:ring-1 peer-checked:ring-slate-800">
-                        <input type="radio" name="split-mode" value="range" class="w-5 h-5 text-slate-800 accent-slate-800" onchange="toggleSplitInputs()">
+                    <label class="flex items-center gap-3 p-4 border rounded-lg cursor-pointer hover:bg-slate-50 transition has-[:checked]:border-2 has-[:checked]:border-indigo-600 has-[:checked]:bg-indigo-50 has-[:checked]:ring-0">
+                        <input type="radio" name="split-mode" value="range" class="w-5 h-5 text-indigo-600 accent-indigo-600" onchange="toggleSplitInputs()">
                         <div class="flex-1">
                             <span class="block font-bold text-slate-700">指定位置で分割</span>
                             <span class="text-xs text-slate-500">指定したページの後ろでファイルを分割します</span>
                         </div>
                     </label>
-                    <div id="split-range-input" class="hidden pl-8 mt-1">
-                        <label class="block text-sm font-medium text-slate-700 mb-1">分割するページ番号</label>
-                        <input type="number" id="split-page-num" min="1" placeholder="例: 2" class="w-full border border-slate-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-slate-500 focus:outline-none">
-                        <p class="text-xs text-slate-400 mt-1">例：「2」と入力すると、1-2ページと3-最後までのページに分割されます。</p>
+                    
+                    <!-- 指定位置入力エリア (New Design) -->
+                    <div id="split-range-input" class="hidden mt-2 pt-4 border-t border-slate-100">
+                        <div class="mb-4 flex items-center justify-between">
+                            <label class="block text-sm font-bold text-slate-700">分割位置の調整</label>
+                            <span class="bg-indigo-100 text-indigo-800 text-xs font-bold px-2 py-1 rounded">全 <span id="total-pages-display">0</span> ページ</span>
+                        </div>
+                        
+                        <!-- スライダー -->
+                        <div class="relative px-2 mb-8">
+                            <input type="range" id="split-slider" min="1" max="1" value="1" class="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-indigo-600 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2">
+                            <!-- 目盛りラベル -->
+                            <div class="absolute -bottom-6 left-0 text-xs text-slate-400">1</div>
+                            <div class="absolute -bottom-6 right-0 text-xs text-slate-400" id="slider-max-label">END</div>
+                            <!-- 現在値のポップアップ（JSで制御） -->
+                            <div id="slider-value-popover" class="absolute -top-10 left-0 transform -translate-x-1/2 bg-slate-800 text-white text-xs font-bold px-2 py-1 rounded opacity-0 transition-opacity">
+                                p.<span id="slider-current-val">1</span>
+                            </div>
+                        </div>
+
+                        <!-- 視覚的プレビュー -->
+                        <div class="flex gap-2 items-stretch h-24 w-full select-none">
+                            <!-- 前半 -->
+                            <div id="preview-part1" class="bg-indigo-50 border-2 border-indigo-200 rounded-lg flex flex-col items-center justify-center transition-all duration-300 relative overflow-hidden" style="width: 50%">
+                                <div class="absolute inset-0 bg-indigo-500/5"></div>
+                                <i class="fa-regular fa-file-pdf text-indigo-300 text-2xl mb-1"></i>
+                                <span class="text-xs font-bold text-indigo-600 z-10">ファイル 1</span>
+                                <span class="text-[10px] text-indigo-400 z-10">p.1 - <span id="preview-p1-end">?</span></span>
+                            </div>
+                            <!-- カットライン -->
+                            <div class="flex flex-col items-center justify-center text-slate-300">
+                                <div class="h-full border-l-2 border-dashed border-slate-300"></div>
+                                <i class="fa-solid fa-scissors absolute bg-white p-1 text-slate-400 rounded-full border border-slate-200"></i>
+                            </div>
+                            <!-- 後半 -->
+                            <div id="preview-part2" class="bg-slate-50 border-2 border-slate-200 rounded-lg flex flex-col items-center justify-center transition-all duration-300 relative overflow-hidden" style="width: 50%">
+                                <i class="fa-regular fa-file-pdf text-slate-300 text-2xl mb-1"></i>
+                                <span class="text-xs font-bold text-slate-600 z-10">ファイル 2</span>
+                                <span class="text-[10px] text-slate-400 z-10">p.<span id="preview-p2-start">?</span> - END</span>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
-            <div class="flex-1"></div>
-            <div class="shrink-0 pt-2">
-                <button id="btn-exec-split" class="w-full bg-slate-800 hover:bg-slate-900 text-white font-bold py-4 px-6 rounded-2xl shadow-lg shadow-slate-200 transition transform active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed disabled:shadow-none flex items-center justify-center gap-2 text-base" disabled>
-                    <i class="fa-solid fa-file-export"></i> 分割を実行
+            
+            <div class="pt-2">
+                <button id="btn-exec-split" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-4 px-6 rounded-lg shadow-lg shadow-indigo-200 transition transform active:scale-[0.98] disabled:bg-indigo-300 disabled:cursor-not-allowed disabled:shadow-none flex items-center justify-center gap-2 text-base" disabled>
+                    <i class="fa-solid fa-download"></i> 分割してダウンロード
                 </button>
             </div>
         </div>
@@ -233,34 +292,35 @@
         <!-- =======================
              タブ: 整理 (Organize)
         ======================== -->
-        <div id="tab-organize" class="tab-content h-full hidden flex-col gap-4">
-             <div id="organize-step-1" class="h-full flex flex-col gap-4">
+        <div id="tab-organize" class="tab-content hidden flex-col gap-4 pb-8">
+             <div id="organize-step-1" class="flex flex-col gap-4">
                 <div class="text-center py-2 hidden sm:block shrink-0">
                     <p class="text-slate-500 text-sm">整理・編集したいPDFファイルを1つ選択してください。</p>
                 </div>
-                <div id="drop-zone-organize" class="flex-1 bg-white border-2 border-dashed border-slate-300 rounded-3xl p-6 text-center transition-all duration-200 cursor-pointer hover:border-blue-400 hover:bg-slate-50 flex flex-col items-center justify-center gap-4">
+                <!-- 整理用ドロップゾーン -->
+                <div id="drop-zone-organize" class="w-full min-h-[240px] bg-white border-2 border-dashed border-slate-300 rounded-xl p-8 text-center transition-all duration-200 cursor-pointer hover:border-indigo-400 hover:bg-indigo-50 flex flex-col items-center justify-center shrink-0">
                     <input type="file" id="file-input-organize" class="hidden" accept="application/pdf">
-                    <div class="w-24 h-24 bg-blue-50 text-blue-500 rounded-full flex items-center justify-center text-4xl mb-2 pointer-events-none">
+                    <div class="w-20 h-20 bg-indigo-50 text-indigo-500 rounded-2xl flex items-center justify-center text-3xl mb-3 pointer-events-none">
                         <i class="fa-solid fa-table-cells-large"></i>
                     </div>
                     <div>
-                        <h2 class="text-xl font-bold text-slate-700 pointer-events-none">PDFを選択して整理</h2>
+                        <h2 class="text-lg font-bold text-slate-700 pointer-events-none">PDFを選択して整理</h2>
                         <p class="text-sm text-slate-400 mt-2 pointer-events-none">ドラッグ＆ドロップ または クリック</p>
                     </div>
                 </div>
             </div>
 
-            <div id="organize-step-2" class="h-full hidden flex-col gap-3">
-                <div class="bg-white p-3 rounded-2xl shadow-sm border border-slate-200 flex flex-wrap gap-2 items-center justify-between shrink-0">
+            <div id="organize-step-2" class="hidden flex-col gap-3">
+                <div class="bg-white p-3 rounded-lg shadow-sm border border-slate-200 flex flex-wrap gap-2 items-center justify-between shrink-0 sticky top-0 z-10">
                     <div class="flex items-center gap-2">
-                        <button onclick="orgRotate(-90)" class="bg-slate-100 hover:bg-slate-200 text-slate-700 px-4 py-2 rounded-xl text-sm font-bold transition flex items-center gap-2" title="左90度回転">
+                        <button onclick="orgRotate(-90)" class="bg-slate-100 hover:bg-slate-200 text-slate-700 px-4 py-2 rounded-md text-sm font-bold transition flex items-center gap-2" title="左90度回転">
                             <i class="fa-solid fa-rotate-left"></i> <span class="hidden sm:inline">左回転</span>
                         </button>
-                        <button onclick="orgRotate(90)" class="bg-slate-100 hover:bg-slate-200 text-slate-700 px-4 py-2 rounded-xl text-sm font-bold transition flex items-center gap-2" title="右90度回転">
+                        <button onclick="orgRotate(90)" class="bg-slate-100 hover:bg-slate-200 text-slate-700 px-4 py-2 rounded-md text-sm font-bold transition flex items-center gap-2" title="右90度回転">
                             <i class="fa-solid fa-rotate-right"></i> <span class="hidden sm:inline">右回転</span>
                         </button>
                         <div class="w-px h-6 bg-slate-300 mx-2"></div>
-                        <button onclick="orgDelete()" class="bg-red-50 hover:bg-red-100 text-red-600 px-4 py-2 rounded-xl text-sm font-bold transition flex items-center gap-2" title="選択したページを削除">
+                        <button onclick="orgDelete()" class="bg-red-50 hover:bg-red-100 text-red-600 px-4 py-2 rounded-md text-sm font-bold transition flex items-center gap-2" title="選択したページを削除">
                             <i class="fa-regular fa-trash-can"></i> <span class="hidden sm:inline">削除</span>
                         </button>
                     </div>
@@ -269,18 +329,18 @@
                     </div>
                 </div>
 
-                <div class="flex-1 bg-slate-100 rounded-3xl border-inner border-slate-200 overflow-y-auto p-4">
+                <div class="bg-slate-100 rounded-xl border-inner border-slate-200 p-4">
                     <div id="organize-grid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
                         <!-- ここにJSでページカードが追加されます -->
                     </div>
                 </div>
 
                 <div class="shrink-0 flex gap-3 pt-2">
-                    <button onclick="resetOrganize()" class="bg-white border border-slate-300 text-slate-600 font-bold py-4 px-6 rounded-2xl hover:bg-slate-50 transition">
+                    <button onclick="resetOrganize()" class="bg-white border border-slate-300 text-slate-600 font-bold py-4 px-6 rounded-lg hover:bg-slate-50 transition">
                         キャンセル
                     </button>
-                    <button id="btn-exec-organize" class="flex-1 bg-slate-800 hover:bg-slate-900 text-white font-bold py-4 px-6 rounded-2xl shadow-lg shadow-slate-200 transition transform active:scale-[0.98] flex items-center justify-center gap-2">
-                        <i class="fa-solid fa-download"></i> 編集したPDFを保存
+                    <button id="btn-exec-organize" class="flex-1 bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-4 px-6 rounded-lg shadow-lg shadow-indigo-200 transition transform active:scale-[0.98] disabled:bg-indigo-300 disabled:cursor-not-allowed disabled:shadow-none flex items-center justify-center gap-2">
+                        <i class="fa-solid fa-download"></i> 整理してダウンロード
                     </button>
                 </div>
             </div>
@@ -289,72 +349,74 @@
         <!-- =======================
              タブ: 変換 (Convert) - Updated
         ======================== -->
-        <div id="tab-convert" class="tab-content h-full hidden flex-col gap-4">
-            <div class="flex items-center justify-center gap-2 bg-slate-100 p-1.5 rounded-2xl shrink-0">
-                <button onclick="toggleConvertMode('img2pdf')" id="btn-mode-img2pdf" class="flex-1 py-2.5 px-4 rounded-xl text-sm font-bold shadow-sm bg-white text-slate-800 transition">画像 → PDF</button>
-                <button onclick="toggleConvertMode('pdf2img')" id="btn-mode-pdf2img" class="flex-1 py-2.5 px-4 rounded-xl text-sm font-medium text-slate-500 hover:bg-white/50 transition">PDF → 画像</button>
+        <div id="tab-convert" class="tab-content hidden flex-col gap-4 pb-8">
+            <div class="flex items-center justify-center gap-2 bg-slate-100 p-1.5 rounded-lg shrink-0">
+                <button onclick="toggleConvertMode('img2pdf')" id="btn-mode-img2pdf" class="flex-1 py-2.5 px-4 rounded-md text-sm font-bold shadow-sm bg-indigo-100 text-indigo-700 border border-indigo-200 transition">画像 → PDF</button>
+                <button onclick="toggleConvertMode('pdf2img')" id="btn-mode-pdf2img" class="flex-1 py-2.5 px-4 rounded-md text-sm font-medium text-slate-500 hover:bg-white/50 transition">PDF → 画像</button>
             </div>
 
             <!-- 画像 → PDF モード -->
-            <div id="convert-img2pdf" class="flex-1 flex flex-col gap-4">
+            <div id="convert-img2pdf" class="flex flex-col gap-4">
                 <div class="text-center py-2 hidden sm:block shrink-0">
                     <p class="text-slate-500 text-sm">画像をアップロードし、PDFファイルに変換・結合します。</p>
                 </div>
                 
-                <div id="drop-zone-img2pdf" class="bg-white border-2 border-dashed border-slate-300 rounded-3xl p-4 text-center transition-all duration-200 cursor-pointer hover:border-blue-400 hover:bg-slate-50 flex flex-col items-center justify-center gap-2 shrink-0">
+                <!-- Img2Pdf ドロップゾーン -->
+                <div id="drop-zone-img2pdf" class="w-full min-h-[240px] bg-white border-2 border-dashed border-slate-300 rounded-xl p-8 text-center transition-all duration-200 cursor-pointer hover:border-indigo-400 hover:bg-indigo-50 flex flex-col items-center justify-center shrink-0">
                     <input type="file" id="file-input-img2pdf" class="hidden" multiple accept="image/jpeg, image/png">
-                    <div class="w-12 h-12 bg-blue-50 text-blue-500 rounded-2xl flex items-center justify-center text-xl mb-1 pointer-events-none">
+                    <div class="w-20 h-20 bg-indigo-50 text-indigo-500 rounded-2xl flex items-center justify-center text-3xl mb-3 pointer-events-none">
                         <i class="fa-regular fa-image"></i>
                     </div>
-                    <h2 class="text-sm font-bold text-slate-700 pointer-events-none">画像を追加 (JPG, PNG)</h2>
-                    <p class="text-xs text-slate-400 pointer-events-none">ドラッグ＆ドロップ または クリック</p>
+                    <h2 class="text-lg font-bold text-slate-700 pointer-events-none">画像を追加 (JPG, PNG)</h2>
+                    <p class="text-sm text-slate-400 mt-2 pointer-events-none">ドラッグ＆ドロップ または クリック</p>
                 </div>
 
-                <div class="flex-1 bg-white rounded-3xl shadow-sm border border-slate-200 overflow-hidden flex flex-col min-h-0">
-                    <div class="p-4 border-b border-slate-100 flex justify-between items-center bg-slate-50 shrink-0">
+                <div class="bg-white rounded-xl shadow-sm border border-slate-200 flex flex-col min-h-[200px]">
+                    <div class="p-4 border-b border-slate-100 flex justify-between items-center bg-slate-50 shrink-0 rounded-t-xl">
                         <h3 class="font-bold text-slate-700 flex items-center gap-2 text-sm">
                             <i class="fa-solid fa-list-ul text-slate-400"></i> 画像一覧
-                            <span id="count-img2pdf" class="bg-slate-200 text-slate-600 text-xs px-2 py-0.5 rounded-full">0</span>
+                            <span id="count-img2pdf" class="bg-slate-200 text-slate-600 text-xs px-2 py-0.5 rounded">0</span>
                         </h3>
                         <button id="clear-img2pdf" class="text-xs text-red-500 hover:text-red-700 font-medium hidden transition hover:bg-red-50 px-2 py-1 rounded">
                             <i class="fa-regular fa-trash-can mr-1"></i>すべて削除
                         </button>
                     </div>
-                    <div id="list-img2pdf" class="flex-1 overflow-y-auto p-4 space-y-2">
-                         <div id="empty-img2pdf" class="h-full flex flex-col items-center justify-center text-slate-300 py-6">
+                    <div id="list-img2pdf" class="p-4 space-y-2">
+                         <div id="empty-img2pdf" class="flex flex-col items-center justify-center text-slate-300 py-10">
                             <i class="fa-regular fa-images text-4xl mb-3 opacity-50"></i>
                             <p class="text-sm">画像がまだありません</p>
                         </div>
                     </div>
                 </div>
 
-                <div class="shrink-0 pt-2">
-                    <button id="btn-exec-img2pdf" class="w-full bg-slate-800 hover:bg-slate-900 text-white font-bold py-4 px-6 rounded-2xl shadow-lg shadow-slate-200 transition transform active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed disabled:shadow-none flex items-center justify-center gap-2 text-base" disabled>
-                        <i class="fa-solid fa-file-export"></i> PDFに変換してダウンロード
+                <div class="pt-2">
+                    <button id="btn-exec-img2pdf" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-4 px-6 rounded-lg shadow-lg shadow-indigo-200 transition transform active:scale-[0.98] disabled:bg-indigo-300 disabled:cursor-not-allowed disabled:shadow-none flex items-center justify-center gap-2 text-base" disabled>
+                        <i class="fa-solid fa-download"></i> PDFに変換してダウンロード
                     </button>
                 </div>
             </div>
 
             <!-- PDF → 画像 モード -->
-            <div id="convert-pdf2img" class="flex-1 hidden flex-col gap-4">
+            <div id="convert-pdf2img" class="hidden flex-col gap-4">
                 <div class="text-center py-2 hidden sm:block shrink-0">
                     <p class="text-slate-500 text-sm">PDFをアップロードし、全ページを画像として保存します。</p>
                 </div>
 
-                <div id="drop-zone-pdf2img" class="flex-1 bg-white border-2 border-dashed border-slate-300 rounded-3xl p-6 text-center transition-all duration-200 cursor-pointer hover:border-blue-400 hover:bg-slate-50 flex flex-col items-center justify-center gap-4">
+                <!-- Pdf2Img ドロップゾーン -->
+                <div id="drop-zone-pdf2img" class="w-full min-h-[240px] bg-white border-2 border-dashed border-slate-300 rounded-xl p-8 text-center transition-all duration-200 cursor-pointer hover:border-indigo-400 hover:bg-indigo-50 flex flex-col items-center justify-center shrink-0">
                     <input type="file" id="file-input-pdf2img" class="hidden" accept="application/pdf">
-                    <div class="w-24 h-24 bg-blue-50 text-blue-500 rounded-2xl flex items-center justify-center text-4xl mb-2 pointer-events-none">
+                    <div class="w-20 h-20 bg-indigo-50 text-indigo-500 rounded-2xl flex items-center justify-center text-3xl mb-3 pointer-events-none">
                         <i class="fa-solid fa-file-pdf"></i>
                     </div>
                     <div>
-                        <h2 id="filename-pdf2img" class="text-xl font-bold text-slate-700 pointer-events-none">PDFを選択</h2>
+                        <h2 id="filename-pdf2img" class="text-lg font-bold text-slate-700 pointer-events-none">PDFを選択</h2>
                         <p class="text-sm text-slate-400 mt-2 pointer-events-none">ドラッグ＆ドロップ または クリック</p>
                     </div>
                 </div>
 
-                <div class="shrink-0 pt-2">
-                    <button id="btn-exec-pdf2img" class="w-full bg-slate-800 hover:bg-slate-900 text-white font-bold py-4 px-6 rounded-2xl shadow-lg shadow-slate-200 transition transform active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed disabled:shadow-none flex items-center justify-center gap-2 text-base" disabled>
-                        <i class="fa-regular fa-images"></i> 画像に変換してダウンロード
+                <div class="pt-2">
+                    <button id="btn-exec-pdf2img" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-4 px-6 rounded-lg shadow-lg shadow-indigo-200 transition transform active:scale-[0.98] disabled:bg-indigo-300 disabled:cursor-not-allowed disabled:shadow-none flex items-center justify-center gap-2 text-base" disabled>
+                        <i class="fa-solid fa-download"></i> 画像に変換してダウンロード
                     </button>
                 </div>
             </div>
@@ -363,33 +425,34 @@
         <!-- =======================
              タブ: 番号 (Number) - Updated
         ======================== -->
-        <div id="tab-number" class="tab-content h-full hidden flex-col gap-4">
+        <div id="tab-number" class="tab-content hidden flex-col gap-4 pb-8">
             <div class="text-center py-2 hidden sm:block shrink-0">
                 <p class="text-slate-500 text-sm">PDFをアップロードし、ページ番号を追記します。</p>
             </div>
 
-            <div id="drop-zone-number" class="bg-white border-2 border-dashed border-slate-300 rounded-3xl p-6 text-center transition-all duration-200 cursor-pointer hover:border-blue-400 hover:bg-slate-50 flex flex-col items-center justify-center gap-2 shrink-0">
+            <!-- 番号用ドロップゾーン -->
+            <div id="drop-zone-number" class="w-full min-h-[240px] bg-white border-2 border-dashed border-slate-300 rounded-xl p-8 text-center transition-all duration-200 cursor-pointer hover:border-indigo-400 hover:bg-indigo-50 flex flex-col items-center justify-center shrink-0">
                 <input type="file" id="file-input-number" class="hidden" accept="application/pdf">
-                <div class="w-14 h-14 bg-blue-50 text-blue-500 rounded-2xl flex items-center justify-center text-2xl mb-2 pointer-events-none">
+                <div class="w-20 h-20 bg-indigo-50 text-indigo-500 rounded-2xl flex items-center justify-center text-3xl mb-3 pointer-events-none">
                     <i class="fa-solid fa-hashtag"></i>
                 </div>
-                <h2 id="filename-number" class="text-base font-bold text-slate-700 pointer-events-none">PDFを選択</h2>
-                <p class="text-xs text-slate-400 pointer-events-none">ドラッグ＆ドロップ または クリック</p>
+                <h2 id="filename-number" class="text-lg font-bold text-slate-700 pointer-events-none">PDFを選択</h2>
+                <p class="text-sm text-slate-400 mt-2 pointer-events-none">ドラッグ＆ドロップ または クリック</p>
             </div>
 
-            <div class="bg-white rounded-3xl shadow-sm border border-slate-200 p-6 flex flex-col gap-6">
+            <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6 flex flex-col gap-6">
                 <h3 class="font-bold text-slate-700 border-b border-slate-100 pb-2">設定</h3>
                 
                 <!-- 書式 -->
                 <div class="space-y-2">
                     <label class="block text-sm font-medium text-slate-700">書式</label>
                     <div class="flex flex-col sm:flex-row gap-4">
-                        <label class="flex items-center gap-3 p-3 border rounded-xl cursor-pointer hover:bg-slate-50 transition peer-checked:border-slate-800 flex-1">
-                            <input type="radio" name="num-format" value="page_only" class="w-5 h-5 text-slate-800 accent-slate-800" checked>
+                        <label class="flex items-center gap-3 p-3 border rounded-md cursor-pointer hover:bg-slate-50 transition has-[:checked]:border-indigo-800 has-[:checked]:bg-indigo-50 has-[:checked]:ring-1 has-[:checked]:ring-indigo-800 flex-1">
+                            <input type="radio" name="num-format" value="page_only" class="w-5 h-5 text-indigo-800 accent-indigo-800" checked>
                             <span class="text-sm font-medium text-slate-700">ページ番号のみ (例: 1)</span>
                         </label>
-                        <label class="flex items-center gap-3 p-3 border rounded-xl cursor-pointer hover:bg-slate-50 transition peer-checked:border-slate-800 flex-1">
-                            <input type="radio" name="num-format" value="page_total" class="w-5 h-5 text-slate-800 accent-slate-800">
+                        <label class="flex items-center gap-3 p-3 border rounded-md cursor-pointer hover:bg-slate-50 transition has-[:checked]:border-indigo-800 has-[:checked]:bg-indigo-50 has-[:checked]:ring-1 has-[:checked]:ring-indigo-800 flex-1">
+                            <input type="radio" name="num-format" value="page_total" class="w-5 h-5 text-indigo-800 accent-indigo-800">
                             <span class="text-sm font-medium text-slate-700">ページ / 総数 (例: 1 / 10)</span>
                         </label>
                     </div>
@@ -400,7 +463,7 @@
                     <div class="space-y-2">
                         <label class="block text-sm font-medium text-slate-700">表示位置</label>
                         <div class="relative">
-                            <select id="num-position" class="w-full appearance-none border border-slate-300 rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-slate-500 focus:outline-none bg-white">
+                            <select id="num-position" class="w-full appearance-none border border-slate-300 rounded-md px-4 py-3 text-sm focus:ring-2 focus:ring-indigo-500 focus:outline-none bg-white">
                                 <option value="bottom-center" selected>中央下</option>
                                 <option value="bottom-left">左下</option>
                                 <option value="bottom-right">右下</option>
@@ -417,32 +480,40 @@
                     <!-- 文字サイズ -->
                     <div class="space-y-2">
                         <label class="block text-sm font-medium text-slate-700">文字サイズ</label>
-                        <input type="number" id="num-size" value="12" min="6" max="72" class="w-full border border-slate-300 rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-slate-500 focus:outline-none">
+                        <input type="number" id="num-size" value="12" min="6" max="72" class="w-full border border-slate-300 rounded-md px-4 py-3 text-sm focus:ring-2 focus:ring-indigo-500 focus:outline-none">
                     </div>
                 </div>
             </div>
 
-            <div class="flex-1"></div>
-            <div class="shrink-0 pt-2">
-                <button id="btn-exec-number" class="w-full bg-slate-800 hover:bg-slate-900 text-white font-bold py-4 px-6 rounded-2xl shadow-lg shadow-slate-200 transition transform active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed disabled:shadow-none flex items-center justify-center gap-2 text-base" disabled>
-                    <i class="fa-solid fa-file-pen"></i> 番号を追加してダウンロード
+            <div class="pt-2">
+                <button id="btn-exec-number" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-4 px-6 rounded-lg shadow-lg shadow-indigo-200 transition transform active:scale-[0.98] disabled:bg-indigo-300 disabled:cursor-not-allowed disabled:shadow-none flex items-center justify-center gap-2 text-base" disabled>
+                    <i class="fa-solid fa-download"></i> 番号を追加してダウンロード
                 </button>
             </div>
         </div>
 
     </main>
 
+    <!-- フッター -->
+    <footer class="bg-slate-50 border-t border-slate-200 py-4 flex-shrink-0 z-10">
+        <div class="max-w-4xl mx-auto px-4 text-center">
+            <p class="text-slate-400 text-xs font-medium tracking-wide">
+                &copy; 2026 Yuichiro Yoshida
+            </p>
+        </div>
+    </footer>
+
     <!-- ローディングオーバーレイ -->
     <div id="loading-overlay" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 flex items-center justify-center hidden">
-        <div class="bg-white p-8 rounded-3xl shadow-2xl flex flex-col items-center max-w-xs w-full mx-4 animate-fade-in">
-            <div class="w-12 h-12 border-4 border-slate-100 border-t-blue-600 rounded-full animate-spin mb-4"></div>
+        <div class="bg-white p-8 rounded-xl shadow-2xl flex flex-col items-center max-w-xs w-full mx-4 animate-fade-in">
+            <div class="w-12 h-12 border-4 border-slate-100 border-t-indigo-600 rounded-full animate-spin mb-4"></div>
             <h3 class="text-lg font-bold text-slate-800 mb-1">処理中...</h3>
             <p class="text-sm text-slate-500 text-center">しばらくお待ちください。</p>
         </div>
     </div>
 
     <!-- 通知トースト -->
-    <div id="toast" class="fixed bottom-6 left-1/2 transform -translate-x-1/2 bg-slate-800 text-white px-6 py-3 rounded-full shadow-lg text-sm font-bold transition-all duration-300 opacity-0 translate-y-10 z-50 flex items-center gap-3 pointer-events-none w-max max-w-[90%]">
+    <div id="toast" class="fixed bottom-6 left-1/2 transform -translate-x-1/2 bg-slate-800 text-white px-6 py-3 rounded-lg shadow-lg text-sm font-bold transition-all duration-300 opacity-0 translate-y-10 z-50 flex items-center gap-3 pointer-events-none w-max max-w-[90%]">
         <i class="fa-solid fa-check-circle text-green-400 text-lg"></i>
         <span id="toast-message" class="truncate">メッセージ</span>
     </div>
@@ -486,7 +557,7 @@
         // ==========================================
         function switchTab(tabName) {
             // アクティブ時のスタイル: 白背景、青文字、影、太字
-            const activeClasses = ['bg-white', 'text-blue-600', 'shadow-sm', 'font-bold'];
+            const activeClasses = ['bg-white', 'text-indigo-600', 'shadow-sm', 'font-bold'];
             // 非アクティブ時のスタイル: グレー文字、背景なし（ホバーで色が変わる）、中太字
             const inactiveClasses = ['text-slate-500', 'hover:text-slate-700', 'font-medium'];
 
@@ -504,10 +575,12 @@
                 content.classList.add('hidden');
                 if(content.id === `tab-${tabName}`) {
                     content.classList.remove('hidden');
-                    content.classList.remove('flex');
-                    content.style.display = 'flex';
+                    // flexクラスはHTML側で制御するため、ここではhiddenの着脱のみ
+                    if (tabName === 'merge' || tabName === 'split' || tabName === 'organize' || tabName === 'convert' || tabName === 'number') {
+                        content.classList.add('flex');
+                    }
                 } else {
-                    content.style.display = 'none';
+                    content.classList.remove('flex');
                 }
             });
         }
@@ -540,12 +613,12 @@
 
             mergeFiles.forEach((item, index) => {
                 const li = document.createElement('div');
-                li.className = 'animate-fade-in group bg-white border border-slate-200 rounded-2xl p-3 flex items-center gap-3 hover:shadow-md transition-shadow select-none';
+                li.className = 'animate-fade-in group bg-white border border-slate-200 rounded-lg p-3 flex items-center gap-3 hover:shadow-md transition-shadow select-none';
                 li.innerHTML = `
                     <div class="drag-handle text-slate-300 hover:text-slate-500 cursor-grab px-2 py-2" title="ドラッグして並べ替え">
                         <i class="fa-solid fa-grip-lines"></i>
                     </div>
-                    <div class="bg-red-50 text-red-500 w-10 h-10 rounded-xl flex items-center justify-center shrink-0">
+                    <div class="bg-indigo-50 text-indigo-500 w-10 h-10 rounded-lg flex items-center justify-center shrink-0">
                         <i class="fa-solid fa-file-pdf text-lg"></i>
                     </div>
                     <div class="flex-1 min-w-0">
@@ -600,7 +673,12 @@
 
         mergeDropZone.addEventListener('click', () => mergeFileInput.click());
         mergeFileInput.addEventListener('change', (e) => { addMergeFiles(e.target.files); mergeFileInput.value=''; });
-        clearBtnMerge.addEventListener('click', () => { if(confirm('全て削除しますか？')){ mergeFiles=[]; renderMergeList(); } });
+        
+        clearBtnMerge.addEventListener('click', () => { 
+            mergeFiles=[]; 
+            renderMergeList(); 
+            showToast('すべてのファイルを削除しました');
+        });
         
         ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(evt => {
             mergeDropZone.addEventListener(evt, (e) => { e.preventDefault(); e.stopPropagation(); });
@@ -637,6 +715,7 @@
         // 機能: 分割 (Split)
         // ==========================================
         let splitFile = null;
+        let splitTotalPages = 0;
         const splitDropZone = document.getElementById('drop-zone-split');
         const splitFileInput = document.getElementById('file-input-split');
         const splitFileName = document.getElementById('split-filename');
@@ -647,6 +726,9 @@
             const mode = document.querySelector('input[name="split-mode"]:checked').value;
             if (mode === 'range') {
                 splitRangeInput.classList.remove('hidden');
+                if (splitTotalPages > 1) {
+                    updateSliderUI();
+                }
             } else {
                 splitRangeInput.classList.add('hidden');
             }
@@ -657,12 +739,73 @@
                 showToast('PDFファイルを選択してください', true);
                 return;
             }
-            splitFile = file;
-            splitFileName.textContent = file.name;
-            splitFileName.classList.add('text-blue-600');
-            btnExecSplit.disabled = false;
-            showToast('ファイルを選択しました');
+            toggleLoading(true);
+            const reader = new FileReader();
+            reader.onload = async function(e) {
+                try {
+                    const arrayBuffer = e.target.result;
+                    const pdfDoc = await PDFLib.PDFDocument.load(arrayBuffer);
+                    splitTotalPages = pdfDoc.getPageCount();
+                    
+                    splitFile = file;
+                    splitFileName.textContent = file.name;
+                    splitFileName.classList.add('text-indigo-600');
+                    btnExecSplit.disabled = false;
+                    
+                    // スライダー設定
+                    const splitSlider = document.getElementById('split-slider');
+                    const totalPagesDisplay = document.getElementById('total-pages-display');
+                    const sliderMaxLabel = document.getElementById('slider-max-label');
+
+                    splitSlider.max = splitTotalPages - 1; // 最終ページの前まで
+                    splitSlider.value = Math.floor(splitTotalPages / 2); // 真ん中
+                    totalPagesDisplay.textContent = splitTotalPages;
+                    sliderMaxLabel.textContent = splitTotalPages;
+                    
+                    if (splitTotalPages <= 1) {
+                        showToast('このファイルは1ページしかないため分割できません', true);
+                        btnExecSplit.disabled = true;
+                    } else {
+                        updateSliderUI();
+                        showToast('ファイルを読み込みました');
+                    }
+                } catch (err) {
+                    console.error(err);
+                    showToast('PDFの読み込みに失敗しました', true);
+                } finally {
+                    toggleLoading(false);
+                }
+            };
+            reader.readAsArrayBuffer(file);
         }
+
+        function updateSliderUI() {
+            const splitSlider = document.getElementById('split-slider');
+            const val = parseInt(splitSlider.value);
+            const sliderCurrentVal = document.getElementById('slider-current-val');
+            const previewP1End = document.getElementById('preview-p1-end');
+            const previewP2Start = document.getElementById('preview-p2-start');
+            const previewPart1 = document.getElementById('preview-part1');
+            const previewPart2 = document.getElementById('preview-part2');
+            const sliderValuePopover = document.getElementById('slider-value-popover');
+
+            // 数値表示更新
+            sliderCurrentVal.textContent = val;
+            previewP1End.textContent = val;
+            previewP2Start.textContent = val + 1;
+
+            // バーの幅更新
+            const percentage = (val / (splitTotalPages)) * 100;
+            previewPart1.style.width = `${percentage}%`;
+            previewPart2.style.width = `${100 - percentage}%`;
+
+            // ポップオーバー位置更新
+             const rangePercent = ((val - splitSlider.min) / (splitSlider.max - splitSlider.min)) * 100;
+             sliderValuePopover.style.left = `calc(${rangePercent}% + (${8 - rangePercent * 0.15}px))`;
+             sliderValuePopover.classList.remove('opacity-0');
+        }
+
+        document.getElementById('split-slider').addEventListener('input', updateSliderUI);
 
         splitDropZone.addEventListener('click', () => splitFileInput.click());
         splitFileInput.addEventListener('change', (e) => { 
@@ -699,8 +842,7 @@
                     const content = await zip.generateAsync({type:"blob"});
                     saveAs(content, "split-pages.zip");
                 } else {
-                    const splitPointStr = document.getElementById('split-page-num').value;
-                    const splitPoint = parseInt(splitPointStr);
+                    const splitPoint = parseInt(document.getElementById('split-slider').value);
                     if (isNaN(splitPoint) || splitPoint < 1 || splitPoint >= totalPages) throw new Error(`有効なページ番号を指定してください`);
 
                     const pdf1 = await PDFLib.PDFDocument.create();
@@ -780,13 +922,13 @@
             const scale = 0.5;
             const viewport = page.getViewport({scale: scale});
             const card = document.createElement('div');
-            card.className = 'page-card bg-white p-2 rounded-xl shadow-sm border border-slate-200 cursor-pointer hover:shadow-md transition relative flex flex-col gap-2 select-none';
+            card.className = 'page-card bg-white p-2 rounded-md shadow-sm border border-slate-200 cursor-pointer hover:shadow-md transition relative flex flex-col gap-2 select-none';
             card.setAttribute('data-page-index', pageNum - 1);
             card.setAttribute('data-rotation', '0');
             card.addEventListener('click', (e) => { card.classList.toggle('selected'); updateSelectedCount(); });
 
             const canvasWrapper = document.createElement('div');
-            canvasWrapper.className = 'relative w-full aspect-[1/1.414] bg-slate-50 overflow-hidden flex items-center justify-center rounded-lg border border-slate-100';
+            canvasWrapper.className = 'relative w-full aspect-[1/1.414] bg-slate-50 overflow-hidden flex items-center justify-center rounded border border-slate-100';
             const canvas = document.createElement('canvas');
             const context = canvas.getContext('2d');
             canvas.height = viewport.height;
@@ -828,9 +970,11 @@
         window.orgDelete = () => {
             const selected = document.querySelectorAll('.page-card.selected');
             if(selected.length === 0) return;
-            if(!confirm(`${selected.length}ページを削除しますか？`)) return;
+            
+            // confirm() を削除し、即座に削除処理を実行
             selected.forEach(card => card.remove());
             updateSelectedCount();
+            showToast('削除しました');
         };
 
         window.resetOrganize = () => {
@@ -884,23 +1028,31 @@
         let pdf2imgFile = null;
         
         window.toggleConvertMode = (mode) => {
+            // 表示切り替え
             document.getElementById('convert-img2pdf').classList.toggle('hidden', mode !== 'img2pdf');
             document.getElementById('convert-img2pdf').style.display = mode === 'img2pdf' ? 'flex' : 'none';
             document.getElementById('convert-pdf2img').classList.toggle('hidden', mode !== 'pdf2img');
             document.getElementById('convert-pdf2img').style.display = mode === 'pdf2img' ? 'flex' : 'none';
 
+            // ボタンのスタイル定義
+            const activeClassList = ['bg-indigo-100', 'text-indigo-700', 'shadow-sm', 'border', 'border-indigo-200', 'font-bold'];
+            const inactiveClassList = ['text-slate-500', 'hover:bg-white/50', 'font-medium'];
+
             const btnImg = document.getElementById('btn-mode-img2pdf');
             const btnPdf = document.getElementById('btn-mode-pdf2img');
+
             if (mode === 'img2pdf') {
-                btnImg.classList.add('bg-white', 'text-slate-800', 'shadow-sm');
-                btnImg.classList.remove('text-slate-500', 'hover:bg-white/50');
-                btnPdf.classList.remove('bg-white', 'text-slate-800', 'shadow-sm');
-                btnPdf.classList.add('text-slate-500', 'hover:bg-white/50');
+                btnImg.classList.add(...activeClassList);
+                btnImg.classList.remove(...inactiveClassList);
+                
+                btnPdf.classList.remove(...activeClassList);
+                btnPdf.classList.add(...inactiveClassList);
             } else {
-                btnPdf.classList.add('bg-white', 'text-slate-800', 'shadow-sm');
-                btnPdf.classList.remove('text-slate-500', 'hover:bg-white/50');
-                btnImg.classList.remove('bg-white', 'text-slate-800', 'shadow-sm');
-                btnImg.classList.add('text-slate-500', 'hover:bg-white/50');
+                btnPdf.classList.add(...activeClassList);
+                btnPdf.classList.remove(...inactiveClassList);
+                
+                btnImg.classList.remove(...activeClassList);
+                btnImg.classList.add(...inactiveClassList);
             }
         };
 
@@ -928,7 +1080,7 @@
 
             imgFiles.forEach((item, index) => {
                 const li = document.createElement('div');
-                li.className = 'bg-white border border-slate-200 rounded-2xl p-3 flex items-center gap-3 select-none';
+                li.className = 'bg-white border border-slate-200 rounded-lg p-3 flex items-center gap-3 select-none';
                 li.innerHTML = `
                     <div class="drag-handle-img text-slate-300 hover:text-slate-500 cursor-grab px-2 py-2"><i class="fa-solid fa-grip-lines"></i></div>
                     <div class="w-12 h-12 bg-slate-100 rounded-xl flex items-center justify-center shrink-0 overflow-hidden">
@@ -1000,7 +1152,7 @@
             if(file.type !== 'application/pdf') { showToast('PDFを選択してください', true); return; }
             pdf2imgFile = file;
             filenamePdf2Img.textContent = file.name;
-            filenamePdf2Img.classList.add('text-blue-600');
+            filenamePdf2Img.classList.add('text-indigo-600');
             btnExecPdf2Img.disabled = false;
         }
 
@@ -1052,7 +1204,7 @@
             if(file.type !== 'application/pdf') { showToast('PDFを選択してください', true); return; }
             numberFile = file;
             filenameNumber.textContent = file.name;
-            filenameNumber.classList.add('text-blue-600');
+            filenameNumber.classList.add('text-indigo-600');
             btnExecNumber.disabled = false;
         }
 
